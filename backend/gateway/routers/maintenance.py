@@ -62,6 +62,34 @@ async def list_work_orders(status: str | None = None, priority: str | None = Non
         ]
         return {"work_orders": orders, "total": len(orders)}
 
+@router.get("/crews")
+async def list_crews(status: str | None = None, db: AsyncSession = Depends(get_db)):
+    """List all maintenance crews."""
+    try:
+        query = select(MaintenanceCrew)
+        if status:
+            query = query.filter(MaintenanceCrew.status == status)
+            
+        result = await db.execute(query)
+        rows = result.scalars().all()
+        
+        crews = []
+        for c in rows:
+            crews.append({
+                "id": str(c.id),
+                "name": c.name,
+                "zone": c.zone,
+                "status": c.status,
+                "members": c.members_count,
+                "location": c.current_location,
+                "specialization": c.specialization,
+            })
+            
+        return {"crews": crews, "total": len(crews)}
+    except Exception as e:
+        print(f"Warning: Live crews data failed ({e}). Using fallback data.")
+        return {"crews": [], "total": 0}
+
 
 @router.post("/dispatch")
 async def dispatch_crew(

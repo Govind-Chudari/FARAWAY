@@ -112,6 +112,17 @@ export function useWorkOrders(status?: string, priority?: string) {
   });
 }
 
+export function useCrews() {
+  return useQuery({
+    queryKey: ["crews"],
+    queryFn: async () => {
+      const { data } = await api.get("/maintenance/crews");
+      return data as { crews: any[]; total: number };
+    },
+    refetchInterval: 10000,
+  });
+}
+
 // ─── Weather ───
 export function useWeather(routeId: string) {
   return useQuery({

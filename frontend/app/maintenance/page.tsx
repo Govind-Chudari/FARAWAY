@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useWorkOrders } from "@/lib/queries";
+import { useWorkOrders, useCrews } from "@/lib/queries";
 import toast from "react-hot-toast";
 import { Modal } from "@/components/ui/Modal";
 import {
@@ -49,6 +49,7 @@ const crewStatusConfig: Record<string, { color: string; bg: string; ring: string
 
 export default function MaintenancePage() {
   const { data } = useWorkOrders();
+  const { data: crewsData } = useCrews();
 
   const workOrders = (data?.work_orders ?? []).map((wo: any) => ({
     id: wo.id,
@@ -61,7 +62,7 @@ export default function MaintenancePage() {
     createdAt: wo.created_at?.slice(11, 16) || "—",
   }));
 
-  const crews: any[] = [];
+  const crews = crewsData?.crews ?? [];
 
   const activeCount = workOrders.filter((wo: any) => wo.status !== "completed").length;
   const completedCount = workOrders.filter((wo: any) => wo.status === "completed").length;
