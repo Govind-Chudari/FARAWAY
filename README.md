@@ -18,9 +18,9 @@ This project addresses the critical need for **autonomous, predictive safety mon
 ## 🔗 Live Demo & Resources
 | Resource | Link |
 |---|---|
-| 🔗 **Frontend (Vercel)** | *[Insert Vercel Link Here]* |
-| 🔗 **Backend API (DigitalOcean)** | *[Insert API Docs Link Here]* |
-| 🎥 **Demo Video** | *[Insert YouTube Link Here]* |
+| 🔗 **Frontend (Vercel)** | https://faraway-railmind.vercel.app/ |
+| 🔗 **Backend API (DigitalOcean)** | http://64.227.151.94:8000/docs |
+| 🎥 **Demo Video** | https://youtu.be/EIEN_IrMfxU |
 
 *Note: For the hackathon evaluation, the backend can be run locally using Docker Compose, while the frontend is deployable to Vercel.*
 
