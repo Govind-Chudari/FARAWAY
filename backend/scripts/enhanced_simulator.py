@@ -12,7 +12,8 @@ from shared.models.train import Train
 from shared.models.segment import Segment
 from shared.models.maintenance_crew import MaintenanceCrew
 
-KAFKA_BROKER = "localhost:9092"
+import os
+KAFKA_BROKER = os.getenv("KAFKA_BROKER_URL", "localhost:9092")
 TOPIC = "railnerv_telemetry"
 
 INITIAL_TRAINS = [
