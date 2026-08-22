@@ -207,7 +207,7 @@ export default function ChangeHistoryPage() {
                       entityType={selectedRecord.entity_type} 
                       entityId={selectedRecord.entity_id} 
                       entityLabel={`${selectedRecord.entity_type.replace("_", " ")} ${selectedRecord.entity_id.slice(0,8)}`} 
-                      currentStatus={selectedRecord.action} 
+                      currentStatus={selectedRecord.action as "active" | "archived" | "deleted"} 
                     />
                   )}
                 </div>
