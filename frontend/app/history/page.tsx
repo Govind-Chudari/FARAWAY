@@ -8,6 +8,7 @@ import { formatDistanceToNow, format } from "date-fns";
 import { Archive, Trash2, Edit2, Plus, RotateCcw, Clock, Download, X, Search, ChevronRight, FileJson } from "lucide-react";
 import { cn } from "@/lib/utils";
 import * as Dialog from "@radix-ui/react-dialog";
+import { LifecycleManager } from "@/components/panels/LifecycleManager";
 
 const ENTITY_TYPES = ["segment", "train", "incident", "work_order", "drone"];
 const ACTIONS = ["created", "updated", "archived", "deleted", "restored"];
@@ -196,9 +197,19 @@ export default function ChangeHistoryPage() {
                   </div>
                   <h2 className="text-xl font-bold text-white font-mono">{selectedRecord.entity_id}</h2>
                 </div>
-                <div className="text-right">
-                  <div className="text-sm text-gray-400">{format(new Date(selectedRecord.created_at), "PPP 'at' p")}</div>
-                  <div className="text-sm font-medium text-gray-300 mt-1">By {selectedRecord.changed_by}</div>
+                <div className="text-right flex flex-col items-end gap-3">
+                  <div>
+                    <div className="text-sm text-gray-400">{format(new Date(selectedRecord.created_at), "PPP 'at' p")}</div>
+                    <div className="text-sm font-medium text-gray-300 mt-1">By {selectedRecord.changed_by}</div>
+                  </div>
+                  {(selectedRecord.action === "archived" || selectedRecord.action === "deleted") && (
+                    <LifecycleManager 
+                      entityType={selectedRecord.entity_type} 
+                      entityId={selectedRecord.entity_id} 
+                      entityLabel={`${selectedRecord.entity_type.replace("_", " ")} ${selectedRecord.entity_id.slice(0,8)}`} 
+                      currentStatus={selectedRecord.action} 
+                    />
+                  )}
                 </div>
               </div>
               
