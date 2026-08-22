@@ -19,11 +19,19 @@ This project addresses the critical need for **autonomous, predictive safety mon
 | Resource | Link |
 |---|---|
 | 🔗 **Frontend (Vercel)** | https://faraway-railmind.vercel.app/ |
-| 🔗 **Backend API (GCP)** | http://34.14.128.156:8000/docs |
+| 🔗 **Backend API (Google Cloud)** | http://34.14.128.156:8000/docs |
 | 🎥 **Demo Video** | https://youtu.be/fgnzIGJVEu4 |
 | 📂 **Architecture & UML Assets** | [Google Drive Folder](https://drive.google.com/drive/folders/1YbszPm9gUl5ce1vteqLwGV0VWYnPK005) |
 
 *Note: For the hackathon evaluation, the backend can be run locally using Docker Compose, while the frontend is deployable to Vercel.*
+
+---
+
+## 🚀 Round 2 Updates: Entity Lifecycle & Change Tracking
+For Round 2, we introduced a **Comprehensive Change History & Lifecycle Management System** to ensure full auditability and operational safety:
+* **Entity Lifecycle Manager:** Admins can securely `Archive`, `Restore`, or `Delete` critical assets (Track Segments, Trains, Drones, Work Orders, Incidents) directly from the dashboard.
+* **Global Change History:** A dedicated tracking system logs every mutation (Create, Update, Archive, Restore, Delete) across the database.
+* **Granular Audit Trails:** The system records *who* made the change (Operator ID), *when* it was made, the *exact reason*, and generates a precise JSON Diff (Old vs. New field values) for every action.
 
 ---
 
