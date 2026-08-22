@@ -21,6 +21,8 @@ This project addresses the critical need for **autonomous, predictive safety mon
 | 🔗 **Frontend (Vercel)** | https://faraway-railmind.vercel.app/ |
 | 🔗 **Backend API (Google Cloud)** | http://34.14.128.156:8000/docs |
 | 🎥 **Demo Video** | https://youtu.be/fgnzIGJVEu4 |
+| 📺 **Pitch Deck Video** | https://youtu.be/Nt07pPpHoVg |
+| 📊 **Presentation (PPT)** | [Canva Link](https://canva.link/yqkasi2ax24vv1u) |
 | 📂 **Architecture & UML Assets** | [Google Drive Folder](https://drive.google.com/drive/folders/1YbszPm9gUl5ce1vteqLwGV0VWYnPK005) |
 
 *Note: For the hackathon evaluation, the backend can be run locally using Docker Compose, while the frontend is deployable to Vercel.*
