@@ -18,6 +18,7 @@ export const NAV_ITEMS = [
   { href: "/audit", label: "Audit Trail", icon: "ScrollText" },
   { href: "/maintenance", label: "Maintenance", icon: "Wrench" },
   { href: "/reports", label: "Reports", icon: "FileBarChart" },
+  { href: "/history", label: "Change History", icon: "History" },
 ] as const;
 
 export const MOCK_STATS = {

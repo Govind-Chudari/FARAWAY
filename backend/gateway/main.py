@@ -14,6 +14,8 @@ from gateway.routers import (
     drones,
     reports,
     demo,
+    history,
+    lifecycle,
 )
 from gateway.websocket.manager import sio
 from gateway.middleware.logging import LoggingMiddleware
@@ -62,6 +64,8 @@ app.include_router(maintenance.router, prefix=PREFIX)
 app.include_router(drones.router, prefix=PREFIX)
 app.include_router(reports.router, prefix=PREFIX)
 app.include_router(demo.router, prefix=PREFIX)
+app.include_router(history.router, prefix=PREFIX)
+app.include_router(lifecycle.router, prefix=PREFIX)
 
 # Socket.IO mount
 socket_app = socketio.ASGIApp(sio, other_asgi_app=app, socketio_path="/ws/socket.io")

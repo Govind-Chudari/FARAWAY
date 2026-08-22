@@ -12,7 +12,7 @@ router = APIRouter(prefix="/tracks", tags=["Tracks"])
 async def list_tracks(status: str | None = None, db: AsyncSession = Depends(get_db)):
     """List all monitored track segments."""
     try:
-        query = select(Segment)
+        query = select(Segment).filter(Segment.is_archived == False, Segment.is_deleted == False)
         if status:
             query = query.filter(Segment.status == status)
             

@@ -96,8 +96,18 @@ async def seed():
         print("Seeding Trains...")
         trains = []
         import random
+        import sys
+        
+        # Read from CLI argument, default to 20 per route (100 total for 5 routes)
+        try:
+            trains_per_route = int(sys.argv[1]) if len(sys.argv) > 1 else 20
+        except ValueError:
+            trains_per_route = 20
+            
+        print(f"Seeding {trains_per_route} trains per route (Total: {len(ROUTES) * trains_per_route} trains)...")
+        
         for i, route in enumerate(ROUTES):
-            for j in range(5):
+            for j in range(trains_per_route):
                 origin = route['name'].split("-")[0]
                 destination = route['name'].split("-")[1]
                 t = Train(

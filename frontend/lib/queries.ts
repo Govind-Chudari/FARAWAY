@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "./api";
 
 // ─── Trains ───
@@ -144,5 +144,130 @@ export function useIncident(incidentId: string) {
       return data;
     },
     enabled: !!incidentId,
+  });
+}
+
+// ─── Change History ───
+export function useChangeHistory(filters?: {
+  entity_type?: string;
+  action?: string;
+  changed_by?: string;
+  from_date?: string;
+  to_date?: string;
+  limit?: number;
+  offset?: number;
+}) {
+  return useQuery({
+    queryKey: ["changeHistory", filters],
+    queryFn: async () => {
+      const { data } = await api.get("/history", { params: filters });
+      return data as { records: any[]; total: number; page: number };
+    },
+    refetchInterval: 10000,
+  });
+}
+
+export function useEntityHistory(entityType: string, entityId: string) {
+  return useQuery({
+    queryKey: ["entityHistory", entityType, entityId],
+    queryFn: async () => {
+      const { data } = await api.get(`/history/${entityType}/${entityId}`);
+      return data as any[];
+    },
+    enabled: !!entityType && !!entityId,
+  });
+}
+
+export function useHistoryStats() {
+  return useQuery({
+    queryKey: ["historyStats"],
+    queryFn: async () => {
+      const { data } = await api.get("/history/stats");
+      return data;
+    },
+    refetchInterval: 30000,
+  });
+}
+
+export function useRecordSnapshot(recordId: string | null) {
+  return useQuery({
+    queryKey: ["recordSnapshot", recordId],
+    queryFn: async () => {
+      const { data } = await api.get(`/history/${recordId}/snapshot`);
+      return data.snapshot;
+    },
+    enabled: !!recordId,
+  });
+}
+
+// ─── Lifecycle ───
+export function useArchivedEntities(entityType?: string) {
+  return useQuery({
+    queryKey: ["archivedEntities", entityType],
+    queryFn: async () => {
+      const { data } = await api.get("/lifecycle/archived", { params: entityType ? { entity_type: entityType } : undefined });
+      return data as Record<string, any[]>;
+    },
+  });
+}
+
+export function useDeletedEntities(entityType?: string) {
+  return useQuery({
+    queryKey: ["deletedEntities", entityType],
+    queryFn: async () => {
+      const { data } = await api.get("/lifecycle/deleted", { params: entityType ? { entity_type: entityType } : undefined });
+      return data as Record<string, any[]>;
+    },
+  });
+}
+
+export function useArchiveEntity() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ entityType, entityId, reason, operator }: { entityType: string; entityId: string; reason?: string; operator?: string }) => {
+      const { data } = await api.post(`/lifecycle/${entityType}/${entityId}/archive`, { reason, operator });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tracks"] });
+      queryClient.invalidateQueries({ queryKey: ["workorders"] });
+      queryClient.invalidateQueries({ queryKey: ["drones"] });
+      queryClient.invalidateQueries({ queryKey: ["changeHistory"] });
+      queryClient.invalidateQueries({ queryKey: ["historyStats"] });
+    },
+  });
+}
+
+export function useRestoreEntity() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ entityType, entityId, reason, operator }: { entityType: string; entityId: string; reason?: string; operator?: string }) => {
+      const { data } = await api.post(`/lifecycle/${entityType}/${entityId}/restore`, { reason, operator });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tracks"] });
+      queryClient.invalidateQueries({ queryKey: ["workorders"] });
+      queryClient.invalidateQueries({ queryKey: ["drones"] });
+      queryClient.invalidateQueries({ queryKey: ["changeHistory"] });
+      queryClient.invalidateQueries({ queryKey: ["historyStats"] });
+    },
+  });
+}
+
+export function useDeleteEntity() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ entityType, entityId, reason, operator }: { entityType: string; entityId: string; reason?: string; operator?: string }) => {
+      const { data } = await api.delete(`/lifecycle/${entityType}/${entityId}`, { data: { reason, operator } });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tracks"] });
+      queryClient.invalidateQueries({ queryKey: ["workorders"] });
+      queryClient.invalidateQueries({ queryKey: ["drones"] });
+      queryClient.invalidateQueries({ queryKey: ["changeHistory"] });
+      queryClient.invalidateQueries({ queryKey: ["historyStats"] });
+    },
   });
 }

@@ -13,7 +13,7 @@ async def list_trains(status: str | None = None, db: AsyncSession = Depends(get_
     """List all tracked trains with current positions."""
     try:
         # Join with Segment to get the segment code
-        query = select(Train, Segment.code).outerjoin(Segment, Train.current_segment_id == Segment.id)
+        query = select(Train, Segment.code).outerjoin(Segment, Train.current_segment_id == Segment.id).filter(Train.is_archived == False, Train.is_deleted == False)
         if status:
             query = query.filter(Train.status == status)
         

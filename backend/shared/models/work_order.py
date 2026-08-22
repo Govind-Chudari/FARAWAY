@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, Integer, Text, DateTime, ForeignKey, SmallInteger, func
+from sqlalchemy import Column, String, Integer, Text, DateTime, ForeignKey, SmallInteger, func, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from shared.database.connection import Base
 
@@ -16,3 +16,7 @@ class WorkOrder(Base):
     estimated_hours = Column(Integer, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     completed_at = Column(DateTime(timezone=True), nullable=True)
+    is_archived = Column(Boolean, default=False)
+    is_deleted = Column(Boolean, default=False)
+    archived_at = Column(DateTime(timezone=True), nullable=True)
+    deleted_at = Column(DateTime(timezone=True), nullable=True)

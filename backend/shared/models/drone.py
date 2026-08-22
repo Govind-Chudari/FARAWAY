@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, Float, DateTime, func
+from sqlalchemy import Column, String, Float, DateTime, func, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from shared.database.connection import Base
 
@@ -16,3 +16,7 @@ class Drone(Base):
     mission = Column(String, nullable=True)
     speed_kmh = Column(Float, default=0.0)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    is_archived = Column(Boolean, default=False)
+    is_deleted = Column(Boolean, default=False)
+    archived_at = Column(DateTime(timezone=True), nullable=True)
+    deleted_at = Column(DateTime(timezone=True), nullable=True)

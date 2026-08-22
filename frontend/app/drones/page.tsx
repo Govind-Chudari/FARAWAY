@@ -3,7 +3,9 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Modal } from "@/components/ui/Modal";
-import { motion } from "framer-motion";
+import { LifecycleManager } from "@/components/panels/LifecycleManager";
+import { ChangeHistoryPanel } from "@/components/panels/ChangeHistoryPanel";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Plane,
   Battery,
@@ -562,13 +564,33 @@ export default function DroneCommandPage() {
                       {drone.signal}%
                     </td>
                     <td className="px-5 py-3">
-                      <ChevronRight className="h-3.5 w-3.5 text-white/25" />
+                      <ChevronRight className={`h-3.5 w-3.5 text-white/25 transition-transform ${selectedDrone === drone.id ? "rotate-90" : ""}`} />
                     </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
+          <AnimatePresence>
+            {selectedDrone && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="bg-white/[0.02] border-t border-white/5 p-6"
+              >
+                <div className="flex gap-6">
+                  <div className="flex-1">
+                    <ChangeHistoryPanel entityType="drone" entityId={selectedDrone} />
+                  </div>
+                  <div className="w-64 flex-none border-l border-white/5 pl-6">
+                    <h3 className="text-[10px] text-white/25 uppercase mb-3">Lifecycle Actions</h3>
+                    <LifecycleManager entityType="drone" entityId={selectedDrone} entityLabel={`Drone ${drones.find((d: any) => d.id === selectedDrone)?.name}`} currentStatus="active" />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </motion.div>
       <Modal open={deployOpen} onOpenChange={setDeployOpen} title="Deploy New UAV">

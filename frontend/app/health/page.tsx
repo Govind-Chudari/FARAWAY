@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { Modal } from "@/components/ui/Modal";
+import { LifecycleManager } from "@/components/panels/LifecycleManager";
+import { ChangeHistoryPanel } from "@/components/panels/ChangeHistoryPanel";
 import { useTracks } from "@/lib/queries";
 import {
   HeartPulse,
@@ -35,7 +37,8 @@ function scoreColor(status: string) {
 export default function TrackHealthPage() {
   const { data } = useTracks();
   const segments = (data?.segments ?? []).map((s: any) => ({
-    id: s.code || s.id,
+    id: s.id || s.code,
+    code: s.code || s.id,
     route: s.route || `${s.from_station || ''} → ${s.to_station || ''}`,
     score: s.health_index ?? 0,
     trend: 0,
@@ -239,6 +242,16 @@ export default function TrackHealthPage() {
                             <div>
                               <p className="text-[10px] text-white/25 uppercase">Health Score</p>
                               <p className="mt-1 font-mono text-[13px] font-bold" style={{ color: scoreColor(seg.status) }}>{seg.score}/100</p>
+                            </div>
+                          </div>
+                          
+                          <div className="mt-6 pt-4 border-t border-white/5 flex gap-6">
+                            <div className="flex-1">
+                              <ChangeHistoryPanel entityType="segment" entityId={seg.id} />
+                            </div>
+                            <div className="w-64 flex-none border-l border-white/5 pl-6">
+                              <h3 className="text-[10px] text-white/25 uppercase mb-3">Lifecycle Actions</h3>
+                              <LifecycleManager entityType="segment" entityId={seg.id} entityLabel={`Segment ${seg.id}`} currentStatus="active" />
                             </div>
                           </div>
                         </div>

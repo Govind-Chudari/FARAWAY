@@ -8,3 +8,7 @@ class EventTypes:
     REROUTE_ISSUED = "reroute:issued"
     AUDIT_ENTRY = "audit:entry"
     ANOMALY_DETECTED = "anomaly:detected"
+    CHANGE_RECORDED = "change:recorded"
+    ENTITY_ARCHIVED = "entity:archived"
+    ENTITY_DELETED = "entity:deleted"
+    ENTITY_RESTORED = "entity:restored"

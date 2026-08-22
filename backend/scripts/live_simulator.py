@@ -104,7 +104,7 @@ async def trigger_acoustic_anomaly(segment_code):
     """Sends a POST request to the API to trigger a websocket Red Alert"""
     try:
         async with httpx.AsyncClient() as client:
-            print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚨 INJECTING CRITICAL ANOMALY on {segment_code}!")
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] INJECTING CRITICAL ANOMALY on {segment_code}!")
             # Triggering via the demo injection route so the UI sees it instantly
             await client.post(
                 "http://localhost:8000/api/v1/demo/trigger-anomaly",
@@ -124,30 +124,45 @@ async def run_simulation():
     while True:
         try:
             async with async_session() as session:
-                # 1. Fetch segments
                 from sqlalchemy.future import select
                 res = await session.execute(select(Segment))
                 segments = res.scalars().all()
-                
-                # 2. Seed trains if empty
                 await seed_trains_if_empty(session, segments)
-                
-                # 3. Simulate continuous movement
                 await simulate_train_movement(session)
-                
-                # 4. Simulate track wear and tear
                 await simulate_track_health(session, segments)
                 
-                # 5. Chaos Engineering: 2% chance every tick to trigger a massive anomaly
-                if segments and random.random() < 0.02:
-                    critical_seg = random.choice(segments)
-                    await trigger_acoustic_anomaly(critical_seg.code)
-                    
             print(f"[{datetime.now().strftime('%H:%M:%S')}] Tick completed: Updated {len(segments)} segments and trains.")
         except Exception as e:
             print(f"Simulation tick error: {e}")
             
-        await asyncio.sleep(5)  # Wait 5 seconds before next tick
+        await asyncio.sleep(2)
+
+async def run_anomaly_spammer():
+    # Fetch segments once to pick from
+    engine = create_async_engine(settings.DATABASE_URL)
+    async_session = async_sessionmaker(engine, expire_on_commit=False)
+    segments = []
+    while not segments:
+        try:
+            async with async_session() as session:
+                from sqlalchemy.future import select
+                res = await session.execute(select(Segment))
+                segments = res.scalars().all()
+        except Exception:
+            pass
+        await asyncio.sleep(2)
+        
+    while True:
+        # Trigger anomaly very frequently (every 10-15 seconds)
+        await asyncio.sleep(random.randint(10, 15))
+        critical_seg = random.choice(segments)
+        await trigger_acoustic_anomaly(critical_seg.code)
+
+async def main():
+    await asyncio.gather(
+        run_simulation(),
+        run_anomaly_spammer()
+    )
 
 if __name__ == "__main__":
-    asyncio.run(run_simulation())
+    asyncio.run(main())

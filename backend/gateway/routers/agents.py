@@ -6,6 +6,7 @@ import uuid
 
 from shared.database.connection import get_db
 from shared.models.agent_decision import AgentDecision
+from shared.change_tracker import ChangeTracker
 
 router = APIRouter(prefix="/agents", tags=["Agents"])
 
@@ -127,9 +128,25 @@ async def override_decision(
     decision = result.scalar_one_or_none()
     
     if decision:
+        snapshot = ChangeTracker.entity_to_dict(decision)
+        changes = {
+            "human_override": {"old": decision.human_override, "new": "true"},
+            "action_taken": {"old": decision.action_taken, "new": override_action}
+        }
         decision.human_override = "true"
         decision.override_reason = reason
         decision.action_taken = override_action
+        
+        await ChangeTracker.record_change(
+            db=db,
+            entity_type="agent_decision",
+            entity_id=decision.id,
+            action="updated",
+            changes=changes,
+            snapshot=snapshot,
+            changed_by=operator,
+            change_reason=reason
+        )
         await db.commit()
         
     return {

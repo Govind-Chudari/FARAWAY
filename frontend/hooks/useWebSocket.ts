@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { connectSocket, disconnectSocket } from "@/lib/socket";
 import { useAlertStore } from "@/stores/alertStore";
 import { useAgentStore } from "@/stores/agentStore";
@@ -9,6 +11,7 @@ type ConnectionStatus = "connecting" | "connected" | "disconnected" | "error";
 
 export function useWebSocket() {
   const [status, setStatus] = useState<ConnectionStatus>("disconnected");
+  const queryClient = useQueryClient();
   const socketRef = useRef<Socket | null>(null);
   const addAlert = useAlertStore((s) => s.addAlert);
   const triggerRedAlert = useAlertStore((s) => s.triggerRedAlert);
@@ -55,12 +58,20 @@ export function useWebSocket() {
       updateTrainPosition(data);
     });
 
+    // EXACT EVENT: change:recorded
+    socket.on("change:recorded", (data) => {
+      queryClient.invalidateQueries({ queryKey: ["changeHistory"] });
+      if (data.action === "deleted" || data.action === "archived") {
+        toast(`${data.entity_type} ${data.entity_id.slice(0, 8)} was ${data.action}`, { icon: "📋" });
+      }
+    });
+
     return () => {
       socket.removeAllListeners();
       disconnectSocket();
       setStatus("disconnected");
     };
-  }, [addAlert, triggerRedAlert, updateAgent, addDecision, updateTrainPosition]);
+  }, [addAlert, triggerRedAlert, updateAgent, addDecision, updateTrainPosition, queryClient]);
 
   const emit = useCallback((event: string, data?: unknown) => {
     socketRef.current?.emit(event, data);

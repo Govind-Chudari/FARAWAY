@@ -25,7 +25,7 @@ async def inject_event(
 
 @router.post("/trigger-anomaly")
 async def trigger_anomaly(
-    segment_id: str = Body(default="seg-mum-del-km402"),
+    segment_id: str = Body(default="seg-mum-del-km402", embed=True),
 ):
     """Specific endpoint to trigger the Red Alert sequence on all frontend clients."""
     payload = {

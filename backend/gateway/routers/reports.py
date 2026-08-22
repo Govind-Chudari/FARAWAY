@@ -6,6 +6,8 @@ import uuid
 from shared.database.connection import get_db
 from shared.models.incident import Incident
 from shared.models.segment import Segment
+from shared.models.change_record import ChangeRecord
+from sqlalchemy import func
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
 
@@ -29,6 +31,9 @@ async def get_incident_report(incident_id: str, db: AsyncSession = Depends(get_d
             
         incident, segment_code = row
         
+        changes_query = select(func.count()).select_from(ChangeRecord).filter(ChangeRecord.entity_id == parsed_uuid)
+        changes_count = await db.scalar(changes_query)
+        
         return {
             "id": str(incident.id),
             "type": incident.type,
@@ -44,6 +49,7 @@ async def get_incident_report(incident_id: str, db: AsyncSession = Depends(get_d
             "agent_decisions": [],
             "work_orders": [],
             "drones_deployed": [],
+            "history_changes_count": changes_count,
         }
     except Exception as e:
         print(f"Warning: Live incident data failed ({e}). Using fallback data.")
@@ -62,4 +68,5 @@ async def get_incident_report(incident_id: str, db: AsyncSession = Depends(get_d
             "agent_decisions": [],
             "work_orders": [],
             "drones_deployed": [],
+            "history_changes_count": 0,
         }

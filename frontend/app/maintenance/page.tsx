@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useWorkOrders, useCrews } from "@/lib/queries";
 import toast from "react-hot-toast";
 import { Modal } from "@/components/ui/Modal";
+import { LifecycleManager } from "@/components/panels/LifecycleManager";
+import { ChangeHistoryPanel } from "@/components/panels/ChangeHistoryPanel";
 import {
   Wrench,
   Users,
@@ -216,6 +218,16 @@ export default function MaintenancePage() {
                             <CheckCircle2 className="h-3.5 w-3.5" /> Completed
                           </span>
                         )}
+                        
+                        <div className="mt-6 pt-4 border-t border-white/5 flex gap-6">
+                          <div className="flex-1">
+                            <ChangeHistoryPanel entityType="work_order" entityId={wo.id} />
+                          </div>
+                          <div className="w-64 flex-none border-l border-white/5 pl-6">
+                            <h3 className="text-[10px] text-white/25 uppercase mb-3">Lifecycle Actions</h3>
+                            <LifecycleManager entityType="work_order" entityId={wo.id} entityLabel={`Work Order ${wo.id}`} currentStatus="active" />
+                          </div>
+                        </div>
                       </div>
                     </motion.div>
                   )}

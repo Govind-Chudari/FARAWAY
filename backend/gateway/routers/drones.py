@@ -6,6 +6,7 @@ import uuid
 
 from shared.database.connection import get_db
 from shared.models.drone import Drone
+from shared.change_tracker import ChangeTracker
 
 router = APIRouter(prefix="/drones", tags=["Drones"])
 
@@ -13,7 +14,7 @@ router = APIRouter(prefix="/drones", tags=["Drones"])
 async def list_drones(status: str | None = None, db: AsyncSession = Depends(get_db)):
     """List all drones in the fleet."""
     try:
-        query = select(Drone)
+        query = select(Drone).filter(Drone.is_archived == False, Drone.is_deleted == False)
         if status:
             query = query.filter(Drone.status == status)
         result = await db.execute(query)
@@ -84,8 +85,21 @@ async def dispatch_drone(
     if drone.status not in ("standby",):
         return {"error": f"Drone is currently {drone.status}, cannot dispatch", "drone_id": drone_id}
 
+    snapshot = ChangeTracker.entity_to_dict(drone)
     drone.status = "dispatched"
     drone.mission = f"{mission_type.capitalize()} on {target_segment}"
+    
+    await ChangeTracker.record_change(
+        db=db,
+        entity_type="drone",
+        entity_id=drone.id,
+        action="updated",
+        changes={"status": {"old": "standby", "new": "dispatched"}},
+        snapshot=snapshot,
+        changed_by="operator",
+        change_reason=f"Dispatched for {mission_type}"
+    )
+    
     await db.commit()
 
     return {

@@ -20,11 +20,12 @@ import {
   Globe,
   ChevronLeft,
   LogOut,
+  History,
 } from "lucide-react";
 
 const iconMap: Record<string, React.ElementType> = {
   LayoutDashboard, Train, HeartPulse, Brain, Activity,
-  AlertTriangle, Plane, ScrollText, Wrench, FileBarChart, Globe,
+  AlertTriangle, Plane, ScrollText, Wrench, FileBarChart, Globe, History,
 };
 
 const NAV = [
@@ -38,6 +39,7 @@ const NAV = [
   { href: "/audit", label: "Audit", icon: "ScrollText" },
   { href: "/maintenance", label: "Maintenance", icon: "Wrench" },
   { href: "/reports", label: "Reports", icon: "FileBarChart" },
+  { href: "/history", label: "Change History", icon: "History" },
   { href: "/social", label: "Crisis Radar", icon: "Globe" },
 ];
 

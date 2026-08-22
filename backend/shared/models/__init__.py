@@ -7,8 +7,9 @@ from .work_order import WorkOrder
 from .incident import Incident
 from .drone import Drone
 from .maintenance_crew import MaintenanceCrew
+from .change_record import ChangeRecord
 
 __all__ = [
     "Base", "Segment", "Train", "AcousticEvent", "AgentDecision",
-    "WorkOrder", "Incident", "Drone", "MaintenanceCrew",
+    "WorkOrder", "Incident", "Drone", "MaintenanceCrew", "ChangeRecord"
 ]

@@ -16,7 +16,7 @@ router = APIRouter(prefix="/maintenance", tags=["Maintenance"])
 async def list_work_orders(status: str | None = None, priority: str | None = None, db: AsyncSession = Depends(get_db)):
     """List maintenance work orders."""
     try:
-        query = select(WorkOrder, Segment.code, MaintenanceCrew).outerjoin(Segment, WorkOrder.segment_id == Segment.id).outerjoin(MaintenanceCrew, WorkOrder.crew_id == MaintenanceCrew.id)
+        query = select(WorkOrder, Segment.code, MaintenanceCrew).outerjoin(Segment, WorkOrder.segment_id == Segment.id).outerjoin(MaintenanceCrew, WorkOrder.crew_id == MaintenanceCrew.id).filter(WorkOrder.is_archived == False, WorkOrder.is_deleted == False)
         
         if status:
             query = query.filter(WorkOrder.status == status)
@@ -80,7 +80,7 @@ async def list_crews(status: str | None = None, db: AsyncSession = Depends(get_d
                 "name": c.name,
                 "zone": c.zone,
                 "status": c.status,
-                "members": c.members_count,
+                "members": c.members,
                 "location": c.current_location,
                 "specialization": c.specialization,
             })

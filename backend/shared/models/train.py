@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, Float, Integer, DateTime, ForeignKey, func
+from sqlalchemy import Column, String, Float, Integer, DateTime, ForeignKey, func, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from shared.database.connection import Base
 
@@ -20,3 +20,7 @@ class Train(Base):
     bearing = Column(Float, default=0.0)
     current_segment_id = Column(UUID(as_uuid=True), ForeignKey("segments.id"), nullable=True)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    is_archived = Column(Boolean, default=False)
+    is_deleted = Column(Boolean, default=False)
+    archived_at = Column(DateTime(timezone=True), nullable=True)
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
